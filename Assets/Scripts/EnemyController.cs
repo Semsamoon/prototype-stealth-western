@@ -68,6 +68,7 @@ public class EnemyController : CharacterController
         if (_currentState != State.Patrol) return;
         if (_isPaused) HandlePause();
         else if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance < 0.5f) OnReachWaypoint();
+        _animator.SetBool("IsMoving", _navMeshAgent.remainingDistance > 0.1f);
     }
 
     private void HandlePause()
