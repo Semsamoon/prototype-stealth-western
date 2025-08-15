@@ -1,4 +1,7 @@
 using System;
+using Perception;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +11,7 @@ public class EnemyController : CharacterController
     [SerializeField] private Waypoint[] _waypoints = Array.Empty<Waypoint>();
     [SerializeField] private PatrolMode _patrolMode = PatrolMode.Loop;
     [SerializeField] private float _detectionRadius = 5f;
+    [SerializeField, Range(0, 360)] private float _detectionAngleDegrees = 90;
     [SerializeField] private float _speed = 3.5f;
 
     [SerializeField] private PlayerController _player;
@@ -141,7 +145,12 @@ public class EnemyController : CharacterController
     {
         if (!_player) return false;
         var distance = Vector3.Distance(transform.position, _player.transform.position);
-        return distance <= _detectionRadius;
+        if (distance > _detectionRadius) return false;
+
+        var angle = new float2(math.cos(math.radians(_detectionAngleDegrees) / 2), 0);
+        var cone = new ComponentSightCone { AnglesCos = angle, ClipSquared = 0, RadiusSquared = _detectionRadius * _detectionRadius };
+        var localToWorld = new LocalToWorld { Value = transform.localToWorldMatrix };
+        return cone.IsInside(transform.position, _player.transform.position, localToWorld);
     }
 
     private void AttackPlayer()
@@ -160,6 +169,12 @@ public class EnemyController : CharacterController
     {
         _currentState = State.Attack;
         _animator.SetTrigger("Attack");
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        var angle = new float2(math.radians(_detectionAngleDegrees) / 2, 0);
+        SightSenseAuthoring.DrawCone(transform.position, transform.rotation, 0, _detectionRadius, angle, Color.red);
     }
 
     private enum PatrolMode
