@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 public sealed class PlayerController : CharacterController
 {
+    [SerializeField] private Animator _barrelAnimator;
+
     private enum State
     {
         Moving,
@@ -62,12 +64,14 @@ public sealed class PlayerController : CharacterController
     {
         _currentState = State.Moving;
         _animator.SetBool("IsMoving", true);
+        _barrelAnimator.SetBool("IsMoving", true);
     }
 
     private void TransitionToStealth()
     {
         _currentState = State.Stealth;
         _animator.SetBool("IsMoving", false);
+        _barrelAnimator.SetBool("IsMoving", false);
     }
 
     private void OnMove(InputAction.CallbackContext context)
