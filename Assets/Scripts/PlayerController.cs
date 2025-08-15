@@ -84,4 +84,9 @@ public sealed class PlayerController : CharacterController
     {
         _movement.Move(_inputDirection);
     }
+
+    public bool IsInStealth()
+    {
+        return _currentState == State.Stealth;
+    }
 }
