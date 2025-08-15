@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.semsamoon.unity-dots-perception": "https://github.com/Semsamoon/unity-dots-perception.git",
     "com.unity.ai.navigation": "2.0.8",
     "com.unity.ide.rider": "3.0.36",
     "com.unity.inputsystem": "1.14.2",
