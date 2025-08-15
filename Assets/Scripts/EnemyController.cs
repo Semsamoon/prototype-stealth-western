@@ -153,13 +153,13 @@ public class EnemyController : CharacterController
     private void TransitionToPatrol()
     {
         _currentState = State.Patrol;
-        _animator.SetBool("IsAttacking", false);
+        _animator.SetTrigger("Attack");
     }
 
     private void TransitionToAttack()
     {
         _currentState = State.Attack;
-        _animator.SetBool("IsAttacking", true);
+        _animator.SetTrigger("Attack");
     }
 
     private enum PatrolMode
