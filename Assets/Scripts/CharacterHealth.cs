@@ -13,7 +13,6 @@ public class CharacterHealth : MonoBehaviour
 
     protected virtual void TriggerDeath()
     {
-        Debug.Log($"{gameObject.name} has died!");
     }
 
     public virtual bool IsAlive()
