@@ -139,6 +139,7 @@ public class EnemyController : CharacterController
         if (_currentState == State.Attack) return;
         if (!other.TryGetComponent<PlayerController>(out var player)) return;
         if (player.IsInStealth()) return;
+        if (!IsRaycast()) return;
         TransitionToAttack();
     }
 
@@ -164,6 +165,13 @@ public class EnemyController : CharacterController
     {
         _currentState = State.Patrol;
         _animator.SetTrigger("Attack");
+    }
+
+    private bool IsRaycast()
+    {
+        if (!_player) return false;
+        return Physics.Raycast(transform.position, _player.transform.position - transform.position, out var hit, _detectionRadius)
+               && hit.collider.TryGetComponent<PlayerController>(out _);
     }
 
     private void TransitionToAttack()
