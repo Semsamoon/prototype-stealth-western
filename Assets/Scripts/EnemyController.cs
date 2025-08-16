@@ -191,11 +191,13 @@ public class EnemyController : CharacterController
         _navMeshAgent.ResetPath();
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         var angle = new float2(math.radians(_detectionAngleDegrees) / 2, 0);
         SightSenseAuthoring.DrawCone(transform.position, transform.rotation, 0, _detectionRadius, angle, Color.red);
     }
+#endif
 
     private enum PatrolMode
     {
