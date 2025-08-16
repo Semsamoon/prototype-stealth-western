@@ -4,6 +4,9 @@ using UnityEngine.InputSystem;
 public sealed class PlayerController : CharacterController
 {
     [SerializeField] private Animator _barrelAnimator;
+    [SerializeField] private GameObject _barrelDestruction;
+
+    private PlayerHealth _health;
 
     private enum State
     {
@@ -19,7 +22,19 @@ public sealed class PlayerController : CharacterController
     {
         base.Awake();
         _playerInput = GetComponent<PlayerInput>();
+        _health = GetComponent<PlayerHealth>();
+        _health.OnDeath += OnDeath;
         _currentState = State.Stealth;
+    }
+
+    private void OnDeath()
+    {
+        _animator.SetTrigger("Die");
+        _currentState = State.Moving;
+        _movement.Move(Vector2.zero);
+        _barrelAnimator.gameObject.SetActive(false);
+        _barrelDestruction.SetActive(true);
+        enabled = false;
     }
 
     private void OnEnable()

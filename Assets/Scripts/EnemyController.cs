@@ -68,7 +68,7 @@ public class EnemyController : CharacterController
         if (_currentState != State.Patrol) return;
         if (_isPaused) HandlePause();
         else if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance < 0.5f) OnReachWaypoint();
-        _animator.SetBool("IsMoving", _navMeshAgent.remainingDistance > 0.1f);
+        _animator.SetBool("IsMoving", _navMeshAgent.remainingDistance > 0.2f);
     }
 
     private void HandlePause()
@@ -125,7 +125,7 @@ public class EnemyController : CharacterController
 
     private void HandleAttackState()
     {
-        if (!IsPlayerInRange() || _player.IsInStealth())
+        if (_player.IsInStealth() || !IsPlayerInRange())
         {
             TransitionToPatrol();
             return;
@@ -138,7 +138,7 @@ public class EnemyController : CharacterController
     {
         if (_currentState == State.Attack) return;
         if (!other.TryGetComponent<PlayerController>(out var player)) return;
-        if (player.IsInStealth()) return;
+        if (player.IsInStealth() || !IsPlayerInRange()) return;
         if (!IsRaycast()) return;
         TransitionToAttack();
     }
@@ -158,6 +158,7 @@ public class EnemyController : CharacterController
     private void AttackPlayer()
     {
         if (!_player.TryGetComponent<PlayerHealth>(out var health)) return;
+        if (!health.IsAlive()) return;
         health.TakeDamage();
     }
 
@@ -178,6 +179,7 @@ public class EnemyController : CharacterController
     {
         _currentState = State.Attack;
         _animator.SetTrigger("Attack");
+        _navMeshAgent.ResetPath();
     }
 
     private void OnDrawGizmosSelected()

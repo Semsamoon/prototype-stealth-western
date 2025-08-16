@@ -1,10 +1,12 @@
-using UnityEngine;
+using System;
 
 public sealed class PlayerHealth : CharacterHealth
 {
+    public event Action OnDeath;
+
     protected override void TriggerDeath()
     {
         base.TriggerDeath();
-        Time.timeScale = 0;
+        OnDeath?.Invoke();
     }
 }
