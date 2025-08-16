@@ -5,6 +5,7 @@ public sealed class PlayerController : CharacterController
 {
     [SerializeField] private Animator _barrelAnimator;
     [SerializeField] private GameObject _barrelDestruction;
+    [SerializeField] private GameController _gameController;
 
     private PlayerHealth _health;
 
@@ -25,15 +26,26 @@ public sealed class PlayerController : CharacterController
         _health = GetComponent<PlayerHealth>();
         _health.OnDeath += OnDeath;
         _currentState = State.Stealth;
+        _gameController.OnGameOver += OnGameOver;
     }
 
     private void OnDeath()
     {
         _animator.SetTrigger("Die");
-        _currentState = State.Moving;
-        _movement.Move(Vector2.zero);
         _barrelAnimator.gameObject.SetActive(false);
         _barrelDestruction.SetActive(true);
+        _currentState = State.Moving;
+        _movement.Move(Vector2.zero);
+        enabled = false;
+        _gameController.OnGameOver -= OnGameOver;
+        _gameController.Lose();
+    }
+
+    private void OnGameOver()
+    {
+        _animator.SetBool("IsMoving", false);
+        _currentState = State.Moving;
+        _movement.Move(Vector2.zero);
         enabled = false;
     }
 

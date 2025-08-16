@@ -15,6 +15,7 @@ public class EnemyController : CharacterController
     [SerializeField] private float _speed = 3.5f;
 
     [SerializeField] private PlayerController _player;
+    [SerializeField] private GameController _gameController;
 
     private NavMeshAgent _navMeshAgent;
     private SphereCollider _detectionZone;
@@ -38,6 +39,14 @@ public class EnemyController : CharacterController
         _detectionZone.isTrigger = true;
 
         _currentState = State.Patrol;
+
+        _gameController.OnGameOver += OnGameOver;
+    }
+
+    private void OnGameOver()
+    {
+        _navMeshAgent.ResetPath();
+        enabled = false;
     }
 
     private void Start()
