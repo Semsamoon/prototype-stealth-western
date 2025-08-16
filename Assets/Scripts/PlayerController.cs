@@ -6,6 +6,7 @@ public sealed class PlayerController : CharacterController
     [SerializeField] private Animator _barrelAnimator;
     [SerializeField] private GameObject _barrelDestruction;
     [SerializeField] private GameController _gameController;
+    [SerializeField] private Joystick _joystick;
 
     private PlayerHealth _health;
 
@@ -54,6 +55,8 @@ public sealed class PlayerController : CharacterController
         if (_playerInput == null) return;
         _playerInput.actions["Move"].performed += OnMove;
         _playerInput.actions["Move"].canceled += OnMoveCanceled;
+        _joystick.OnMove += OnMove;
+        _joystick.OnCanceled += OnMoveCanceled;
     }
 
     private void OnDisable()
@@ -61,6 +64,8 @@ public sealed class PlayerController : CharacterController
         if (_playerInput == null) return;
         _playerInput.actions["Move"].performed -= OnMove;
         _playerInput.actions["Move"].canceled -= OnMoveCanceled;
+        _joystick.OnMove -= OnMove;
+        _joystick.OnCanceled -= OnMoveCanceled;
     }
 
     private void Update()
@@ -101,9 +106,19 @@ public sealed class PlayerController : CharacterController
         _barrelAnimator.SetBool("IsMoving", false);
     }
 
+    private void OnMove(Vector2 direction)
+    {
+        _inputDirection = direction;
+    }
+
     private void OnMove(InputAction.CallbackContext context)
     {
         _inputDirection = context.ReadValue<Vector2>();
+    }
+
+    private void OnMoveCanceled()
+    {
+        _inputDirection = Vector2.zero;
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext context)
